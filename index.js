@@ -1,7 +1,9 @@
 const { ApolloServer } = require('apollo-server');
 const mongoose = require('mongoose');
+require('dotenv').config();
 
-const MONGODB = 'mongodb+srv://majdatyyat:CookieJar@cluster0.7xahmuv.mongodb.net/?retryWrites=true&w=majority';
+
+
 
 // Apollo Server
 // typeDefs: GraphQL Type Definitions
@@ -17,12 +19,15 @@ const server = new ApolloServer({
 
 // Connect to MongoDB and start the server
 mongoose
-    .connect(MONGODB, { useNewUrlParser: true })
-    .then(() => {
-        console.log('MongoDB connection successful');
-          // Start the ApolloServer and listen for incoming requests
-        return server.listen({ port: 5000 });
-    })
-    .then((res) => {
-        console.log(`Server is running at ${res.url}`);
-    });
+  .connect(process.env.MONGODB_CONNECTION_STRING, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log('MongoDB connection successful');
+    // Start the ApolloServer and listen for incoming requests
+    return server.listen({ port: 5000 });
+  })
+  .then((res) => {
+    console.log(`Server is running at ${res.url}`);
+  });
