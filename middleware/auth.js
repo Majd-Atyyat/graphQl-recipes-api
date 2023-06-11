@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 module.exports = (context) => {
   // Get the authorization header from the request
@@ -12,7 +13,8 @@ module.exports = (context) => {
     if (token) {
       try {
         // Verify the token
-        const user = jwt.verify(token, 'your-secret-key');
+        const user = jwt.verify(token, process.env.SECRET_KEY);
+
 
         // Attach the authenticated user to the request context
         return user;

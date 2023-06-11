@@ -1,6 +1,8 @@
 const Recipe = require('../models/Recipe');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const auth = require('../middleware/auth');
+
 
 const secretKey = process.env.SECRET_KEY;
 
@@ -22,7 +24,9 @@ module.exports = {
     },
   },
   Mutation: {
-    async createRecipe(_, { recipeInput: { name, description } }) {
+    async createRecipe(_, { recipeInput: { name, description } }, context) {
+      // Verify the user's authentication
+       auth(context);
       const createdRecipe = new Recipe({
         name: name,
         description: description,
@@ -36,12 +40,16 @@ module.exports = {
         ...res._doc,
       };
     },
-    async deleteRecipe(_, { ID }) {
+    async deleteRecipe(_, { ID }, context) {
+      // Verify the user's authentication
+      auth(context);
       const wasDeleted = (await Recipe.deleteOne({ _id: ID })).deletedCount;
       // 1 if something is deleted, 0 if nothing is deleted
       return wasDeleted;
     },
-    async editRecipe(_, { ID, recipeInput: { name, description } }) {
+    async editRecipe(_, { ID, recipeInput: { name, description } }, context) {
+      // Verify the user's authentication
+       auth(context);
       const wasEdited = (await Recipe.updateOne(
         { _id: ID },
         { name: name, description: description }
